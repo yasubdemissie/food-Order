@@ -6,7 +6,7 @@ import Image from "next/image";
 
 function ImagePicker({ name, label }) {
   const ref = useRef();
-  const { pickedImage, setPickedImage } = useState();
+  const [pickedImage, setPickedImage] = useState();
 
   function pickImage() {
     ref.current.click();
@@ -16,13 +16,13 @@ function ImagePicker({ name, label }) {
     const file = event.target.files[0];
 
     if (!file) {
-      // setPickedImage(null);
+      setPickedImage(null);
       return;
     }
 
     const fileReader = new FileReader();
 
-    fileReader.onLoad = () => {
+    fileReader.onload = () => {
       setPickedImage(fileReader.result);
     };
     fileReader.readAsDataURL(file);
@@ -34,9 +34,10 @@ function ImagePicker({ name, label }) {
 
       <div className={styles.controls}>
         <div className={styles.preview}>
-          {!pickedImage && <p>pick an image to display</p>}
-          {!pickedImage && (
+          {pickedImage ? (
             <Image src={pickedImage} alt="picked image by the user" fill />
+          ) : (
+            <p>pick an image to display</p>
           )}
         </div>
         <input
@@ -46,7 +47,7 @@ function ImagePicker({ name, label }) {
           id={name}
           name={name}
           accept="image/*"
-          onClick={handlePickedImage}
+          onChange={handlePickedImage}
         />
         <button className={styles.button} type="button" onClick={pickImage}>
           Pick Image
